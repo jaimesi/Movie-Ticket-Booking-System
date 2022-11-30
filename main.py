@@ -18,25 +18,25 @@ cursor = connection.cursor()
 def customer_signup():
 
     def signup_button():
-        s1 = str(se1.get())
-        s2 = str(se2.get())
-        s3 = str(se3.get())
-        s4 = str(se4.get())
+        username = str(customer_email.get())
+        password = str(customer_pword.get())
+        first_name = str(customer_fname.get())
+        last_name = str(customer_lname.get())
 
         # TODO: Verify if user's email address is already in database
         # TODO: Verify that user's email address is correctly formatted
 
-        if s1 == "" or s2 == "" or s3 == "" or s4 == "":
+        if username == "" or password == "" or first_name == "" or last_name == "":
             messagebox.showwarning(" ", "All fields must be filled.")
         else:
             try:
                 insert_stmt = "insert into customer (email, password, first_name, last_name) values (%s, %s, %s, %s)"
-                cursor.execute(insert_stmt, (s1, s2, s3, s4))
+                cursor.execute(insert_stmt, (username, password, first_name, last_name))
 
-                se1.delete(0, END)
-                se2.delete(0, END)
-                se3.delete(0, END)
-                se4.delete(0, END)
+                customer_email.delete(0, END)
+                customer_pword.delete(0, END)
+                customer_fname.delete(0, END)
+                customer_lname.delete(0, END)
                 messagebox.showinfo(" ", "Sign up successful.\nPlease log in")
                 window.destroy()
                 # login_page()
@@ -55,20 +55,20 @@ def customer_signup():
     window.option_add("*font", "aerial 15")
 
     Label(window, text="Email Address", fg='white', bg='black', width=20).pack(pady=(200, 0))
-    se1 = Entry(window)
-    se1.pack()
+    customer_email = Entry(window)
+    customer_email.pack()
 
     Label(window, text="Password", fg='white', bg='black', width=20).pack(pady=(20, 0))
-    se2 = Entry(window)
-    se2.pack()
+    customer_pword = Entry(window)
+    customer_pword.pack()
 
     Label(window, text="First Name", fg='white', bg='black', width=20).pack(pady=(20, 0))
-    se3 = Entry(window)
-    se3.pack()
+    customer_fname = Entry(window)
+    customer_fname.pack()
 
     Label(window, text="Last Name", fg='white', bg='black', width=20).pack(pady=(20, 0))
-    se4 = Entry(window)
-    se4.pack()
+    customer_lname = Entry(window)
+    customer_lname.pack()
 
     Button(window, text="Sign Up", fg='white', bg='black', height=1, width=10, command=signup_button).pack(
         pady=(20, 0))
