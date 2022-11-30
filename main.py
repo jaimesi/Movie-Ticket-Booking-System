@@ -39,7 +39,7 @@ def customer_signup():
                 customer_lname.delete(0, END)
                 messagebox.showinfo(" ", "Sign up successful.\nPlease log in")
                 window.destroy()
-                # login_page()
+                customer_login()
 
             except:
                 messagebox.showwarning(" ", "Values entered are either not unique or empty.")
@@ -73,19 +73,43 @@ def customer_signup():
     Button(window, text="Sign Up", fg='white', bg='black', height=1, width=10, command=signup_button).pack(
         pady=(20, 0))
     Button(window, text="Back", fg='white', bg='black', height=1, width=10,
-           command=lambda: [window.destroy(), login_page()]).pack(pady=(10, 0))
+           command=lambda: [window.destroy(), customer_login()]).pack(pady=(10, 0))
 
     window.mainloop()
 
 # TODO: Customer login page
+def customer_login():
+
+    def login_button():
+        username = str(customer_email.get())
+        password = str(customer_pword.get())
+
+        # TODO: Verify if user's email address and password match database
+
+
+        if username == "" or password == "":
+            messagebox.showwarning(" ", "All fields must be filled.")
+
+# TODO: Customer home page
+    # Home page has current movies being shown and buttons
+    # Buttons should allow customers to book tickets, view their tickets booked, delete their bookings
+
+# TODO: Customer book ticket page
+
+# TODO: Customer view bookings page
+    # Customer should only be able to view their tickets that are booked. They can delete their ticket.
 
 # TODO: Manager login page
 
-# TODO: Customer home page
-    # Customer should be able to view current movies, book tickets, view their tickets booked, delete their bookings
-
 # TODO: Manager home page
-    # Manager should be able to view all tickets booked, add showings, delete showings
+    # Buttons to view all tickets booked, manage showings
+
+# TODO: Manager view bookings page
+    # Manager should be able to view all tickets booked in database
+
+# TODO: Manager manage showings page
+    # Manager should be able to add or delete showings
+
 
 # Starting page with login, sign up, and quit buttons
 window = Tk()
