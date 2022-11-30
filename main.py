@@ -14,7 +14,7 @@ connection = pymysql.connect(host='localhost',
 cursor = connection.cursor()
 
 
-# Signup page
+# Customer signup page
 def customer_signup():
 
     def signup_button():
@@ -46,7 +46,7 @@ def customer_signup():
 
         connection.commit()
 
-    # Sign up window
+    # Customer sign up window
     window = Tk()
 
     window.geometry('800x800')
@@ -77,9 +77,17 @@ def customer_signup():
 
     window.mainloop()
 
-# Login page
+# TODO: Customer login page
 
-# Starting page
+# TODO: Manager login page
+
+# TODO: Customer home page
+    # Customer should be able to view current movies, book tickets, view their tickets booked, delete their bookings
+
+# TODO: Manager home page
+    # Manager should be able to view all tickets booked, add showings, delete showings
+
+# Starting page with login, sign up, and quit buttons
 window = Tk()
 
 width = window.winfo_screenwidth()
