@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
+import re
 
 import pymysql.cursors
 
@@ -16,31 +17,49 @@ cursor = connection.cursor()
 
 # Customer signup page
 def customer_signup():
+
+    # Expression for validating an email
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+
     def signup_button():
         email = str(customer_email.get())
         password = str(customer_pword.get())
         first_name = str(customer_fname.get())
         last_name = str(customer_lname.get())
 
-        # TODO: Verify if user's email address is already in database
-        # TODO: Verify that user's email address is correctly formatted
-
+        # Verify that all fields are filled for the sign up sheet
         if email == "" or password == "" or first_name == "" or last_name == "":
             messagebox.showwarning(" ", "All fields must be filled.")
+        # Verify that the user's email address is correctly formatted
+        elif re.fullmatch(regex, email) is None:
+            messagebox.showwarning(" ", "Please enter a valid email address.")
         else:
             try:
-                insert_stmt = "INSERT INTO customer (email, password, first_name, last_name) VALUES (%s, %s, %s, %s)"
-                cursor.execute(insert_stmt, (email, password, first_name, last_name))
+                # Check if the email address already has an account associated with it
+                check_existing_user_stmt = "SELECT COUNT(*) FROM customer WHERE email = %s"
+                cursor.execute(check_existing_user_stmt, email)
 
-                customer_email.delete(0, END)
-                customer_pword.delete(0, END)
-                customer_fname.delete(0, END)
-                customer_lname.delete(0, END)
-                messagebox.showinfo(" ", "Sign up successful.\nPlease log in")
-                window.destroy()
-                customer_login()
+                num_rows = cursor.fetchone()
 
-            except:
+                # If a row is found, the customer account already exists
+                if num_rows['COUNT(*)'] >= 1:
+                    messagebox.showwarning(" ", "There is already an account associated with this email address. "
+                                                "Please login instead.")
+                else:
+                    # Insert values into customer table
+                    insert_stmt = "INSERT INTO customer (email, password, first_name, last_name) " \
+                                  "VALUES (%s, %s, %s, %s)"
+                    cursor.execute(insert_stmt, (email, password, first_name, last_name))
+
+                    customer_email.delete(0, END)
+                    customer_pword.delete(0, END)
+                    customer_fname.delete(0, END)
+                    customer_lname.delete(0, END)
+                    messagebox.showinfo(" ", "Sign up successful.\nPlease log in")
+                    window.destroy()
+                    customer_login()
+
+            except Exception as e:
                 messagebox.showwarning(" ", "Values entered are either not unique or empty.")
 
         connection.commit()
@@ -77,7 +96,7 @@ def customer_signup():
     window.mainloop()
 
 
-# TODO: Customer login page
+# Customer login page
 def customer_login():
     def login_button():
         customer_login_email = str(cust_email.get())
@@ -107,7 +126,6 @@ def customer_login():
 
             except Exception as e:
                 messagebox.showwarning(" ", "An error occurred.")
-                print(e)
 
     # Customer login window
     window = Tk()
