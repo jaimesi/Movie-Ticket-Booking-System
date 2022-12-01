@@ -89,14 +89,17 @@ def customer_login():
         else:
             try:
                 # Verify if customer's email address and password match database
-                select_stmt = "SELECT COUNT(customer_id) FROM customer WHERE email = %s AND password = %s"
+                select_stmt = "SELECT COUNT(*) FROM customer WHERE email = %s AND password = %s"
                 cursor.execute(select_stmt, (customer_login_email, customer_login_password))
 
-                num_rows = cursor.rowcount()
+                # Check to see if a value is returned
+                num_rows = cursor.fetchone()
 
-                if num_rows == 0:
+                # If no rows are found, the customer account does not exist
+                if num_rows["COUNT(*)"] == 0:
                     messagebox.showwarning(" ", "There is no account associated with this email address.")
-                    # If the account exists and the password matches, go to home page of the customer
+
+                # If the account exists and the password matches, go to home page of the customer
                 else:
                     window.destroy()
                     home_page(customer_login_email)
@@ -105,7 +108,6 @@ def customer_login():
             except Exception as e:
                 messagebox.showwarning(" ", "An error occurred.")
                 print(e)
-
 
     # Customer login window
     window = Tk()
