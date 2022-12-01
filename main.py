@@ -16,9 +16,8 @@ cursor = connection.cursor()
 
 # Customer signup page
 def customer_signup():
-
     def signup_button():
-        username = str(customer_email.get())
+        email = str(customer_email.get())
         password = str(customer_pword.get())
         first_name = str(customer_fname.get())
         last_name = str(customer_lname.get())
@@ -26,12 +25,12 @@ def customer_signup():
         # TODO: Verify if user's email address is already in database
         # TODO: Verify that user's email address is correctly formatted
 
-        if username == "" or password == "" or first_name == "" or last_name == "":
+        if email == "" or password == "" or first_name == "" or last_name == "":
             messagebox.showwarning(" ", "All fields must be filled.")
         else:
             try:
-                insert_stmt = "insert into customer (email, password, first_name, last_name) values (%s, %s, %s, %s)"
-                cursor.execute(insert_stmt, (username, password, first_name, last_name))
+                insert_stmt = "INSERT INTO customer (email, password, first_name, last_name) VALUES (%s, %s, %s, %s)"
+                cursor.execute(insert_stmt, (email, password, first_name, last_name))
 
                 customer_email.delete(0, END)
                 customer_pword.delete(0, END)
@@ -77,38 +76,79 @@ def customer_signup():
 
     window.mainloop()
 
+
 # TODO: Customer login page
 def customer_login():
-
     def login_button():
-        username = str(customer_email.get())
-        password = str(customer_pword.get())
+        customer_login_email = str(cust_email.get())
+        customer_login_password = str(cust_pword.get())
 
-        # TODO: Verify if user's email address and password match database
-
-
-        if username == "" or password == "":
+        # No input can be left blank
+        if customer_login_email == "" or customer_login_password == "":
             messagebox.showwarning(" ", "All fields must be filled.")
+        else:
+            try:
+                # Verify if customer's email address and password match database
+                select_stmt = "SELECT COUNT(customer_id) FROM customer WHERE email = %s AND password = %s"
+                cursor.execute(select_stmt, (customer_login_email, customer_login_password))
+
+                num_rows = cursor.rowcount()
+
+                if num_rows == 0:
+                    messagebox.showwarning(" ", "There is no account associated with this email address.")
+                    # If the account exists and the password matches, go to home page of the customer
+                else:
+                    window.destroy()
+                    home_page(customer_login_email)
+                connection.commit()
+
+            except Exception as e:
+                messagebox.showwarning(" ", "An error occurred.")
+                print(e)
+
+
+    # Customer login window
+    window = Tk()
+
+    window.geometry('800x800')
+
+    window.title("New User Sign Up")
+    window.option_add("*font", "aerial 15")
+
+    Label(window, text="Email Address", fg='white', bg='black', width=20).pack(pady=(250, 0))
+    cust_email = Entry(window)
+    cust_email.pack()
+
+    Label(window, text="Password", fg='white', bg='black', width=20).pack(pady=(10, 0))
+    cust_pword = Entry(window)
+    cust_pword.pack()
+
+    Button(window, text="LOGIN", fg='white', bg='black', height=1, width=20, command=login_button).pack(pady=(20, 0))
+    Button(window, text="CREATE ACCOUNT", fg='white', bg='black', height=1, width=20,
+           command=lambda: [window.destroy(), customer_signup()]).pack(pady=(10, 0))
+    Button(window, text="QUIT", fg='white', bg='black', height=1, width=20, command=window.destroy).pack(pady=(10, 0))
+
+
 
 # TODO: Customer home page
-    # Home page has current movies being shown and buttons
-    # Buttons should allow customers to book tickets, view their tickets booked, delete their bookings
+# Home page has current movies being shown and buttons
+# Buttons should allow customers to book tickets, view their tickets booked, delete their bookings
 
 # TODO: Customer book ticket page
 
 # TODO: Customer view bookings page
-    # Customer should only be able to view their tickets that are booked. They can delete their ticket.
+# Customer should only be able to view their tickets that are booked. They can delete their ticket.
 
 # TODO: Manager login page
 
 # TODO: Manager home page
-    # Buttons to view all tickets booked, manage showings
+# Buttons to view all tickets booked, manage showings
 
 # TODO: Manager view bookings page
-    # Manager should be able to view all tickets booked in database
+# Manager should be able to view all tickets booked in database
 
 # TODO: Manager manage showings page
-    # Manager should be able to add or delete showings
+# Manager should be able to add or delete showings
 
 
 # Starting page with login, sign up, and quit buttons
@@ -121,10 +161,12 @@ window.geometry("%dx%d" % (width, height))
 window.title("Moving Ticket Booking Program")
 window.option_add("*font", "aerial 15")
 
-Button(window, text="Login", height=2, width=15, bg='black', fg='white',
-       command=lambda: [window.destroy(), login_page()]).pack(pady=(300, 0))
-Button(window, text="Sign Up", height=2, width=15, bg='black', fg='white',
-       command=lambda: [window.destroy(), customer_signup()]).pack(pady=(20, 0))
+Button(window, text="Customer Login", height=2, width=15, bg='black', fg='white',
+       command=lambda: [window.destroy(), customer_login()]).pack(pady=(200, 0))
+Button(window, text="Manager Login", height=2, width=15, bg='black', fg='white',
+       command=lambda: [window.destroy(), manager_login()]).pack(pady=(20, 0))
+Button(window, text="Customer Sign Up", height=2, width=15, bg='black', fg='white',
+       command=lambda: [window.destroy(), customer_signup()]).pack(pady=(100, 0))
 Button(window, text="Quit", height=2, width=15, bg='black', fg='white', command=window.destroy).pack(pady=(20, 0))
 
 window.mainloop()
