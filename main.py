@@ -27,7 +27,7 @@ def customer_signup():
         first_name = str(customer_fname.get())
         last_name = str(customer_lname.get())
 
-        # Verify that all fields are filled for the sign up sheet
+        # Verify that all fields are filled for the sign-up sheet
         if email == "" or password == "" or first_name == "" or last_name == "":
             messagebox.showwarning(" ", "All fields must be filled.")
         # Verify that the user's email address is correctly formatted
@@ -51,12 +51,15 @@ def customer_signup():
                                   "VALUES (%s, %s, %s, %s)"
                     cursor.execute(insert_stmt, (email, password, first_name, last_name))
 
+                    # Delete text box contents
                     customer_email.delete(0, END)
                     customer_pword.delete(0, END)
                     customer_fname.delete(0, END)
                     customer_lname.delete(0, END)
                     messagebox.showinfo(" ", "Sign up successful.\nPlease log in")
                     window.destroy()
+
+                    # Automatically bring new user to login page
                     customer_login()
 
             except Exception as e:
