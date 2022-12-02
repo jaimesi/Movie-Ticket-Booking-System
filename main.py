@@ -1,3 +1,4 @@
+import tkinter
 from tkinter import *
 from tkinter import messagebox
 import re
@@ -123,11 +124,12 @@ def customer_login():
                 # If the account exists and the password matches, go to home page of the customer
                 else:
                     window.destroy()
-                    customer_home_page(customer_login_email)
+                    customer_home_page()
                 connection.commit()
 
             except Exception as e:
                 messagebox.showwarning(" ", "An error occurred.")
+                print(e)
 
     # Customer login window
     window = Tk()
@@ -154,6 +156,39 @@ def customer_login():
 # TODO: Customer home page
 # Home page has current movies being shown and buttons
 # Buttons should allow customers to book tickets, view their tickets booked, delete their bookings
+def customer_home_page():
+
+    # Customer homepage window
+    window = Tk()
+
+    window.geometry('1920x1080')
+
+    window.title("Home Page")
+    window.state("zoomed")
+    window.option_add("*font", "aerial 15")
+
+    # cnv = Canvas(window, width=400, height=400)
+    # cnv.pack()
+
+    # Movie posters
+    black_adam_poster = PhotoImage(file='assets/black_adam_poster_resized.gif')
+    black_adam_poster_2 = PhotoImage(file='assets/black_adam_poster_resized.gif')
+    black_panther_wakanda_forever_poster = PhotoImage(file='assets/black_panther_wakanda_forever_poster.png')
+    the_menu_poster = PhotoImage(file='assets/the_menu_poster.png')
+    ticket_to_paradise_poster = PhotoImage(file='assets/ticket_to_paradise_poster.png')
+
+    # Label(window, text="Movies Currently Playing", fg='black', bg='light grey', width=100).pack(side=LEFT)
+
+    black_adam_button = Button(window, image=black_adam_poster, compound=CENTER)
+    black_adam_button.grid(column=0, row=0)
+
+    black_panther_button = Button(window, image=black_adam_poster_2, compound=CENTER)
+    black_panther_button.grid(column=1, row=0)
+
+    # cnv.create_image(30, 30, image=black_adam_poster, anchor='nw')
+
+    window.mainloop()
+
 
 # TODO: Customer book ticket page
 
@@ -185,7 +220,7 @@ def manager_login():
                 # If the account exists and the password matches, go to home page of the manager
                 else:
                     window.destroy()
-                    manager_home_page(manager_username)
+                    manager_home_page()
                 connection.commit()
 
             except Exception as e:
