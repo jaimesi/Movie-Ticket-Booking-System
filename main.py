@@ -17,7 +17,6 @@ cursor = connection.cursor()
 
 # Customer signup page
 def customer_signup():
-
     # Expression for validating an email
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
@@ -135,7 +134,7 @@ def customer_login():
 
     window.geometry('800x800')
 
-    window.title("New User Sign Up")
+    window.title("Customer Login")
     window.option_add("*font", "aerial 15")
 
     Label(window, text="Email Address", fg='white', bg='black', width=20).pack(pady=(250, 0))
@@ -152,7 +151,6 @@ def customer_login():
     Button(window, text="QUIT", fg='white', bg='black', height=1, width=20, command=window.destroy).pack(pady=(10, 0))
 
 
-
 # TODO: Customer home page
 # Home page has current movies being shown and buttons
 # Buttons should allow customers to book tickets, view their tickets booked, delete their bookings
@@ -163,6 +161,57 @@ def customer_login():
 # Customer should only be able to view their tickets that are booked. They can delete their ticket.
 
 # TODO: Manager login page
+def manager_login():
+    def manager_login_button():
+        manager_username = str(manager_user.get())
+        manager_password = str(manager_pword.get())
+
+        # No input can be left blank
+        if manager_username == "" or manager_password == "":
+            messagebox.showwarning(" ", "All fields must be filled.")
+        else:
+            try:
+                # Verify if manager's username and password match database
+                manager_select_stmt = "SELECT COUNT(*) FROM manager WHERE username = %s AND password = %s"
+                cursor.execute(manager_select_stmt, (manager_username, manager_password))
+
+                # Check to see if a value is returned
+                num_rows = cursor.fetchone()
+
+                # If no rows are found, the manager account does not exist
+                if num_rows["COUNT(*)"] == 0:
+                    messagebox.showwarning(" ", "Incorrect manager login information. Try again.")
+
+                # If the account exists and the password matches, go to home page of the customer
+                else:
+                    window.destroy()
+                    manager_home_page(manager_username)
+                connection.commit()
+
+            except Exception as e:
+                messagebox.showwarning(" ", "An error occurred.")
+
+    # Manager login window
+    window = Tk()
+
+    window.geometry('800x800')
+
+    window.title("Manager Login")
+    window.option_add("*font", "aerial 15")
+
+    Label(window, text="Username", fg='white', bg='black', width=20).pack(pady=(250, 0))
+    manager_user = Entry(window)
+    manager_user.pack()
+
+    Label(window, text="Password", fg='white', bg='black', width=20).pack(pady=(10, 0))
+    manager_pword = Entry(window)
+    manager_pword.pack()
+
+    Button(window, text="LOGIN", fg='white', bg='black', height=1, width=20, command=manager_login_button).pack(
+        pady=(20, 0))
+    Button(window, text="QUIT", fg='white', bg='black', height=1, width=20, command=window.destroy).pack(
+        pady=(10, 0))
+
 
 # TODO: Manager home page
 # Buttons to view all tickets booked, manage showings
