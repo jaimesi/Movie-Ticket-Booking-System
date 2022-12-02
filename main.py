@@ -182,7 +182,7 @@ def manager_login():
                 if num_rows["COUNT(*)"] == 0:
                     messagebox.showwarning(" ", "Incorrect manager login information. Try again.")
 
-                # If the account exists and the password matches, go to home page of the customer
+                # If the account exists and the password matches, go to home page of the manager
                 else:
                     window.destroy()
                     manager_home_page(manager_username)
