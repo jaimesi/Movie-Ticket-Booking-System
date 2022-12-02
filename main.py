@@ -167,25 +167,26 @@ def customer_home_page():
     window.state("zoomed")
     window.option_add("*font", "aerial 15")
 
-    # cnv = Canvas(window, width=400, height=400)
-    # cnv.pack()
-
     # Movie posters
-    black_adam_poster = PhotoImage(file='assets/black_adam_poster_resized.gif')
-    black_adam_poster_2 = PhotoImage(file='assets/black_adam_poster_resized.gif')
-    black_panther_wakanda_forever_poster = PhotoImage(file='assets/black_panther_wakanda_forever_poster.png')
-    the_menu_poster = PhotoImage(file='assets/the_menu_poster.png')
-    ticket_to_paradise_poster = PhotoImage(file='assets/ticket_to_paradise_poster.png')
+    black_adam_poster = PhotoImage(file='assets/black_adam_poster.gif')
+    black_panther_wakanda_forever_poster = PhotoImage(file='assets/black_panther_wakanda_forever_poster.gif')
+    the_menu_poster = PhotoImage(file='assets/the_menu_poster.gif')
+    ticket_to_paradise_poster = PhotoImage(file='assets/ticket_to_paradise_poster.gif')
 
-    # Label(window, text="Movies Currently Playing", fg='black', bg='light grey', width=100).pack(side=LEFT)
+    movie_showings_text = Label(window, text="Movies Currently Playing", fg='black', height=3)
+    movie_showings_text.grid(columnspan=4, row=0)
 
     black_adam_button = Button(window, image=black_adam_poster, compound=CENTER)
-    black_adam_button.grid(column=0, row=0)
+    black_adam_button.grid(column=0, row=1, padx=10, pady=10)
 
-    black_panther_button = Button(window, image=black_adam_poster_2, compound=CENTER)
-    black_panther_button.grid(column=1, row=0)
+    black_panther_button = Button(window, image=black_panther_wakanda_forever_poster, compound=CENTER)
+    black_panther_button.grid(column=1, row=1, padx=10, pady=10)
 
-    # cnv.create_image(30, 30, image=black_adam_poster, anchor='nw')
+    the_menu_button = Button(window, image=the_menu_poster, compound=CENTER)
+    the_menu_button.grid(column=2, row=1, padx=10, pady=10)
+
+    ticket_to_paradise_button = Button(window, image=ticket_to_paradise_poster, compound=CENTER)
+    ticket_to_paradise_button.grid(column=3, row=1, padx=10, pady=10)
 
     window.mainloop()
 
