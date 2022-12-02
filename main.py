@@ -161,32 +161,47 @@ def customer_home_page():
     # Customer homepage window
     window = Tk()
 
-    window.geometry('1920x1080')
+    window.geometry('1450x800')
 
     window.title("Home Page")
-    window.state("zoomed")
-    window.option_add("*font", "aerial 15")
 
-    # Movie posters
+    # Opening imaged of the movie posters
     black_adam_poster = PhotoImage(file='assets/black_adam_poster.gif')
     black_panther_wakanda_forever_poster = PhotoImage(file='assets/black_panther_wakanda_forever_poster.gif')
     the_menu_poster = PhotoImage(file='assets/the_menu_poster.gif')
     ticket_to_paradise_poster = PhotoImage(file='assets/ticket_to_paradise_poster.gif')
 
-    movie_showings_text = Label(window, text="Movies Currently Playing", fg='black', height=3)
-    movie_showings_text.grid(columnspan=4, row=0)
+    # Header for movies currently playing
+    movie_showings_text = Label(window, text="Movies Currently Playing", fg='black', height=3, font='Helvetica 18 bold')
+    movie_showings_text.grid(columnspan=3, column=0, row=1)
 
-    black_adam_button = Button(window, image=black_adam_poster, compound=CENTER)
-    black_adam_button.grid(column=0, row=1, padx=10, pady=10)
+    # Logout button
+    logout_button = Button(window, text="Logout", fg='white', bg='maroon',
+                           height=2, width=10, font='Helvetica 12 bold',
+                           command=lambda: [window.destroy(), customer_login()])
+    logout_button.grid(column=3, row=1, pady=20)
 
-    black_panther_button = Button(window, image=black_panther_wakanda_forever_poster, compound=CENTER)
-    black_panther_button.grid(column=1, row=1, padx=10, pady=10)
+    # Creating buttons with the movie posters as the image
+    black_adam_button = Button(window, image=black_adam_poster)
+    black_adam_button.grid(column=0, row=2, padx=10)
 
-    the_menu_button = Button(window, image=the_menu_poster, compound=CENTER)
-    the_menu_button.grid(column=2, row=1, padx=10, pady=10)
+    black_panther_button = Button(window, image=black_panther_wakanda_forever_poster)
+    black_panther_button.grid(column=1, row=2, padx=10)
 
-    ticket_to_paradise_button = Button(window, image=ticket_to_paradise_poster, compound=CENTER)
-    ticket_to_paradise_button.grid(column=3, row=1, padx=10, pady=10)
+    the_menu_button = Button(window, image=the_menu_poster)
+    the_menu_button.grid(column=2, row=2, padx=10)
+
+    ticket_to_paradise_button = Button(window, image=ticket_to_paradise_poster)
+    ticket_to_paradise_button.grid(column=3, row=2, padx=10)
+
+    # Buttons to book tickets and view booked tickets
+    book_ticket_button = Button(window, text="BOOK TICKETS", fg='white', bg='maroon',
+                                height=2, width=20, font='Helvetica 18 bold')
+    book_ticket_button.grid(columnspan=2, column=0, row=3, pady=20)
+
+    view_bookings_button = Button(window, text="VIEW BOOKINGS", fg='white', bg='maroon',
+                                  height=2, width=20, font='Helvetica 18 bold')
+    view_bookings_button.grid(columnspan=2, column=2, row=3, pady=20)
 
     window.mainloop()
 
