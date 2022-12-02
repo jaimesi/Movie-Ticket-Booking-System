@@ -153,9 +153,7 @@ def customer_login():
     Button(window, text="QUIT", fg='white', bg='black', height=1, width=20, command=window.destroy).pack(pady=(10, 0))
 
 
-# TODO: Customer home page
-# Home page has current movies being shown and buttons
-# Buttons should allow customers to book tickets, view their tickets booked, delete their bookings
+# Customer home page
 def customer_home_page():
 
     # Customer homepage window
@@ -197,19 +195,32 @@ def customer_home_page():
     # Buttons to book tickets and view booked tickets
     book_ticket_button = Button(window, text="BOOK TICKETS", fg='white', bg='maroon',
                                 height=2, width=20, font='Helvetica 18 bold')
-    book_ticket_button.grid(columnspan=2, column=0, row=3, pady=20)
+    book_ticket_button.grid(columnspan=2, column=0, row=3, pady=20,
+                            command=lambda: [window.destroy(), customer_book_tickets()])
 
     view_bookings_button = Button(window, text="VIEW BOOKINGS", fg='white', bg='maroon',
-                                  height=2, width=20, font='Helvetica 18 bold')
+                                  height=2, width=20, font='Helvetica 18 bold',
+                                  command=lambda: [window.destroy(), customer_view_bookings()])
     view_bookings_button.grid(columnspan=2, column=2, row=3, pady=20)
 
     window.mainloop()
 
 
 # TODO: Customer book ticket page
+def customer_book_tickets():
+    # TODO: dropdown of all movies. Customer can pick a movie. List of showings for that day will appear.
+    # TODO: all imax movies will be in auditorium 3 with recliner seats
+    # TODO: back button to go back to home page
+    pass
+
 
 # TODO: Customer view bookings page
 # Customer should only be able to view their tickets that are booked. They can delete their ticket.
+def customer_view_bookings():
+    # TODO: customer should be able to view only their tickets booked (match customer_id, ticket_id using joins
+    # TODO: customers can delete their bookings
+    pass
+
 
 # Manager login page
 def manager_login():
