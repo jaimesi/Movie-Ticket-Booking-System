@@ -160,7 +160,7 @@ def customer_login():
 # TODO: Customer view bookings page
 # Customer should only be able to view their tickets that are booked. They can delete their ticket.
 
-# TODO: Manager login page
+# Manager login page
 def manager_login():
     def manager_login_button():
         manager_username = str(manager_user.get())
