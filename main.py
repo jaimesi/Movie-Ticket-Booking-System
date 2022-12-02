@@ -123,7 +123,7 @@ def customer_login():
                 # If the account exists and the password matches, go to home page of the customer
                 else:
                     window.destroy()
-                    home_page(customer_login_email)
+                    customer_home_page(customer_login_email)
                 connection.commit()
 
             except Exception as e:
