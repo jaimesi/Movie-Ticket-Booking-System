@@ -217,8 +217,10 @@ def customer_book_tickets():
 # TODO: Customer view bookings page
 # Customer should only be able to view their tickets that are booked. They can delete their ticket.
 def customer_view_bookings():
-    # TODO: customer should be able to view only their tickets booked (match customer_id, ticket_id using joins
+    # TODO: customer should be able to view only their tickets booked (match customer_id, ticket_id using joins)
+    # TODO: ticket info shown should be their first name, last name, movie name, day of showing, time of showing, auditorium number, number of seats booked
     # TODO: customers can delete their bookings
+    # SELECT first_name, last_name FROM customer
     pass
 
 
