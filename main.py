@@ -267,8 +267,8 @@ def customer_manage_bookings():
     show_movie_showings = Frame(window, bg="white", pady=10, padx=10)
     show_movie_showings.grid(row=0, column=3, columnspan=3, rowspan=5)
 
-    button = Button(show_movie_showings, text="Ok", command=lambda: print(var.get()))  # prints the current value of options
-    button.pack()
+    # button = Button(show_movie_showings, text="Ok", command=lambda: print(var.get()))  # prints the current value of options
+    # button.pack()
 
     window.mainloop()
 
