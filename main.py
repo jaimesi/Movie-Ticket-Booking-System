@@ -3,6 +3,7 @@ import webbrowser
 from tkinter import *
 from tkinter import messagebox
 import re
+from tkinter.ttk import Treeview
 
 import pymysql.cursors
 
@@ -43,7 +44,7 @@ def customer_signup():
                 num_rows = cursor.fetchone()
 
                 # If a row is found, the customer account already exists
-                if num_rows['COUNT(*)'] >= 1:
+                if list(num_rows.values())[0] >= 1:
                     messagebox.showwarning(" ", "There is already an account associated with this email address. "
                                                 "Please login instead.")
                 else:
@@ -65,6 +66,7 @@ def customer_signup():
 
             except Exception as e:
                 messagebox.showwarning(" ", "Values entered are either not unique or empty.")
+                print(e)
 
         connection.commit()
 
@@ -112,7 +114,7 @@ def customer_login():
         else:
             try:
                 # Verify if customer's email address and password match database
-                select_stmt = "SELECT COUNT(*) FROM customer WHERE email = %s AND password = %s"
+                select_stmt = "SELECT COUNT(*) FROM customer WHERE email = %s AND customer_password = %s"
                 cursor.execute(select_stmt, (customer_login_email, customer_login_password))
 
                 # Check to see if a value is returned
@@ -156,15 +158,14 @@ def customer_login():
 
 # Customer home page
 def customer_home_page():
-
     # Customer homepage window
     window = Tk()
 
-    window.geometry('1180x650')
+    window.geometry('1180x550')
 
     window.title("Home Page")
 
-    # Opening imaged of the movie posters
+    # Opening images of the movie posters
     black_adam_poster = PhotoImage(file='assets/black_adam_poster.gif')
     black_panther_wakanda_forever_poster = PhotoImage(file='assets/black_panther_wakanda_forever_poster.gif')
     the_menu_poster = PhotoImage(file='assets/the_menu_poster.gif')
@@ -172,7 +173,13 @@ def customer_home_page():
 
     # Header for movies currently playing
     movie_showings_text = Label(window, text="Movies Currently Playing", fg='black', height=3, font='Helvetica 18 bold')
-    movie_showings_text.grid(columnspan=3, column=0, row=1)
+    movie_showings_text.grid(columnspan=2, column=0, row=1)
+
+    # Manage bookings button
+    manage_bookings_button = Button(window, text="Manage Bookings", fg='white', bg='maroon',
+                                    height=2, width=20, font='Helvetica 12 bold',
+                                    command=lambda: [window.destroy(), customer_manage_bookings()])
+    manage_bookings_button.grid(column=2, row=1, pady=20)
 
     # Logout button
     logout_button = Button(window, text="Logout", fg='white', bg='maroon',
@@ -208,36 +215,63 @@ def customer_home_page():
                                        command=ticket_to_paradise_trailer)
     ticket_to_paradise_button.grid(column=3, row=2, padx=10)
 
-    # Buttons to book tickets and view booked tickets
-    book_ticket_button = Button(window, text="BOOK TICKETS", fg='white', bg='maroon',
-                                height=2, width=20, font='Helvetica 18 bold',
-                                command=lambda: [window.destroy(), customer_book_tickets()])
-    book_ticket_button.grid(columnspan=2, column=0, row=3, pady=20)
-
-    view_bookings_button = Button(window, text="VIEW BOOKINGS", fg='white', bg='maroon',
-                                  height=2, width=20, font='Helvetica 18 bold',
-                                  command=lambda: [window.destroy(), customer_view_bookings()])
-    view_bookings_button.grid(columnspan=2, column=2, row=3, pady=20)
-
     window.mainloop()
 
 
-# TODO: Customer book ticket page
-def customer_book_tickets():
+# TODO: Customer manage bookings page
+def customer_manage_bookings():
     # TODO: dropdown of all movies. Customer can pick a movie. List of showings for that day will appear.
-    # TODO: all imax movies will be in auditorium 3 with recliner seats
     # TODO: back button to go back to home page
-    pass
-
-
-# TODO: Customer view bookings page
-# Customer should only be able to view their tickets that are booked. They can delete their ticket.
-def customer_view_bookings():
-    # TODO: customer should be able to view only their tickets booked (match customer_id, ticket_id using joins)
+    # TODO: frame to view all their current reservations. They can delete these tickets
     # TODO: ticket info shown should be their first name, last name, movie name, day of showing, time of showing, auditorium number, number of seats booked
-    # TODO: customers can delete their bookings
-    # SELECT first_name, last_name FROM customer
-    pass
+
+    # Customer book ticket window
+    window = Tk()
+    window.geometry('1000x800')
+    window.title("Book Tickets")
+
+    # Movie booking header
+    movie_booking_header = Label(window, text="Book Tickets", fg='white', bg='black', width=20,
+                                 font='Helvetica 18 bold')
+    movie_booking_header.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
+
+    pick_movie = Label(window, text="Select a Movie:", fg='black', font='Helvetica 12')
+    pick_movie.grid(row=1, column=0, columnspan=1)
+
+    # Dropdown menu to choose movie
+    movie_choices = ["Black Adam", "Black Panther: Wakanda Forever", "The Menu", "Ticket to Paradise"]
+    var = StringVar()  # Stringvar to store the value of options
+    var.set(movie_choices[0])  # sets the default option of options
+
+    movie_options = OptionMenu(window, var, *movie_choices)
+    movie_options.grid(row=1, column=1)
+
+    # TODO: EXAMPLE frame to show all tickets (showings for now)
+
+    tree = Treeview(window, column=("show_id", "movie_id", "pricing_id"), show='headings')
+    tree.column("#1", anchor=CENTER)
+    tree.heading("#1", text="show_id")
+    tree.column("#2", anchor=CENTER)
+    tree.heading("#2", text="movie_id")
+    tree.column("#3", anchor=CENTER)
+    tree.heading("#3", text="pricing_id")
+
+    tree.grid(row=1, column=4)
+
+    cursor.execute("SELECT show_id, movie_id, pricing_id FROM showing")
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row)
+        tree.insert("", END, values=row)
+
+    # Second frame with movie reservations
+    show_movie_showings = Frame(window, bg="white", pady=10, padx=10)
+    show_movie_showings.grid(row=0, column=3, columnspan=3, rowspan=5)
+
+    button = Button(show_movie_showings, text="Ok", command=lambda: print(var.get()))  # prints the current value of options
+    button.pack()
+
+    window.mainloop()
 
 
 # Manager login page
@@ -293,14 +327,8 @@ def manager_login():
         pady=(10, 0))
 
 
-# TODO: Manager home page
+# TODO: Manager home page with all tickets booked and add/update/delete showings
 # Buttons to view all tickets booked, manage showings
-
-# TODO: Manager view bookings page
-# Manager should be able to view all tickets booked in database
-
-# TODO: Manager manage showings page
-# Manager should be able to add or delete showings
 
 
 # Starting page with login, sign up, and quit buttons
