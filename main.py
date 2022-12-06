@@ -38,7 +38,7 @@ def customer_signup():
         else:
             try:
                 # Check if the email address already has an account associated with it
-                check_existing_user_stmt = "SELECT COUNT(*) FROM customer WHERE email = %s"
+                check_existing_user_stmt = "SELECT customerExist(%s)"
                 cursor.execute(check_existing_user_stmt, email)
 
                 num_rows = cursor.fetchone()
@@ -49,8 +49,7 @@ def customer_signup():
                                                 "Please login instead.")
                 else:
                     # Insert values into customer table
-                    insert_stmt = "INSERT INTO customer (email, password, first_name, last_name) " \
-                                  "VALUES (%s, %s, %s, %s)"
+                    insert_stmt = "CALL addCustomer(%s, %s, %s, %s)"
                     cursor.execute(insert_stmt, (email, password, first_name, last_name))
 
                     # Delete text box contents
