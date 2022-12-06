@@ -1,4 +1,5 @@
 import tkinter
+import webbrowser
 from tkinter import *
 from tkinter import messagebox
 import re
@@ -159,7 +160,7 @@ def customer_home_page():
     # Customer homepage window
     window = Tk()
 
-    window.geometry('1450x800')
+    window.geometry('1180x650')
 
     window.title("Home Page")
 
@@ -179,24 +180,39 @@ def customer_home_page():
                            command=lambda: [window.destroy(), customer_login()])
     logout_button.grid(column=3, row=1, pady=20)
 
+    # Functions to open movie trailers on button click
+    def black_adam_trailer():
+        webbrowser.open_new(r"https://youtu.be/X0tOpBuYasI")
+
+    def black_panther_trailer():
+        webbrowser.open_new(r"https://youtu.be/_Z3QKkl1WyM")
+
+    def the_menu_trailer():
+        webbrowser.open_new(r"https://youtu.be/C_uTkUGcHv4")
+
+    def ticket_to_paradise_trailer():
+        webbrowser.open_new(r"https://youtu.be/hkP4tVTdsz8")
+
     # Creating buttons with the movie posters as the image
-    black_adam_button = Button(window, image=black_adam_poster)
+    black_adam_button = Button(window, image=black_adam_poster, command=black_adam_trailer)
     black_adam_button.grid(column=0, row=2, padx=10)
 
-    black_panther_button = Button(window, image=black_panther_wakanda_forever_poster)
+    black_panther_button = Button(window, image=black_panther_wakanda_forever_poster,
+                                  command=black_panther_trailer)
     black_panther_button.grid(column=1, row=2, padx=10)
 
-    the_menu_button = Button(window, image=the_menu_poster)
+    the_menu_button = Button(window, image=the_menu_poster, command=the_menu_trailer)
     the_menu_button.grid(column=2, row=2, padx=10)
 
-    ticket_to_paradise_button = Button(window, image=ticket_to_paradise_poster)
+    ticket_to_paradise_button = Button(window, image=ticket_to_paradise_poster,
+                                       command=ticket_to_paradise_trailer)
     ticket_to_paradise_button.grid(column=3, row=2, padx=10)
 
     # Buttons to book tickets and view booked tickets
     book_ticket_button = Button(window, text="BOOK TICKETS", fg='white', bg='maroon',
-                                height=2, width=20, font='Helvetica 18 bold')
-    book_ticket_button.grid(columnspan=2, column=0, row=3, pady=20,
-                            command=lambda: [window.destroy(), customer_book_tickets()])
+                                height=2, width=20, font='Helvetica 18 bold',
+                                command=lambda: [window.destroy(), customer_book_tickets()])
+    book_ticket_button.grid(columnspan=2, column=0, row=3, pady=20)
 
     view_bookings_button = Button(window, text="VIEW BOOKINGS", fg='white', bg='maroon',
                                   height=2, width=20, font='Helvetica 18 bold',
