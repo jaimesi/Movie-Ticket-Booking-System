@@ -52,6 +52,7 @@ def customer_signup():
                                                 "Please login instead.")
                 else:
                     # Insert values into customer table
+                    # TODO: change to callproc()
                     insert_stmt = "CALL addCustomer(%s, %s, %s, %s)"
                     cursor.execute(insert_stmt, (email, password, first_name, last_name))
 
@@ -226,10 +227,7 @@ def customer():
 
 # TODO: Customer manage bookings page
 def customer_manage_bookings():
-    # TODO: dropdown of all movies. Customer can pick a movie. List of showings for that day will appear.
     # TODO: back button to go back to home page
-    # TODO: frame to view all their current reservations. They can delete these tickets
-    # TODO: ticket info shown should be their first name, last name, movie name, day of showing, time of showing, auditorium number, number of seats booked
 
     # Customer book ticket window
     window = Tk()
@@ -268,7 +266,7 @@ def customer_manage_bookings():
         # treeview.insert(parent='', index=2, iid=2, text='', values=('1030', '2022 - 11 - 29', '$15'))
         treeview.grid(row=100, column=2, columnspan=4)
 
-        cursor.callproc('showShowing', (choice, ))
+        cursor.callproc('showShowing', (choice,))
 
         i = 0
 
@@ -276,18 +274,6 @@ def customer_manage_bookings():
             values = list(row.values())
             treeview.insert(parent='', index=i, iid=i, text='', values=values)
             i = i + 1
-
-        # # Iterate through each row of the procedure and create a label
-        # i = 201
-        # for row in cursor.fetchall():
-        #     for j in range(len(list(row.values()))):
-        #         e = Label(window, width=10, text=list(row.values())[j], anchor='w', borderwidth=2, relief='ridge')
-        #         e.grid(row=i, column=j)
-        #         # show the delete button
-        #         e = Button(window, width=10, text='Delete Ticket', fg='red', relief='ridge',
-        #                        anchor="w", command=lambda k=list(row.values())[0]: delete_ticket(k))
-        #         e.grid(row=i, column=8)
-        #     i = i + 1
 
     # Dropdown menu to choose movie
     movie_choices = ["Black Adam", "Black Panther: Wakanda Forever", "The Menu", "Ticket to Paradise"]
@@ -420,6 +406,8 @@ def manager_login():
 
 
 # TODO: Manager home page with all tickets booked (can delete) and add/update/delete showings
+def manager_home_page():
+    pass
 
 
 # Starting page with login, sign up, and quit buttons
