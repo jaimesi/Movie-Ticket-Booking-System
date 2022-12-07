@@ -414,188 +414,257 @@ def manager():
     Button(window, text="QUIT", fg='white', bg='black', height=1, width=20, command=window.destroy).pack(
         pady=(10, 0))
 
-    # TODO: Manager home page with all tickets booked (can delete) and add/update/delete showings
+    # Manager home page with all tickets booked (can delete) and add/update/delete showings
     def manager_home_page():
 
         window = Tk()
-        window.geometry('800x600')
+        window.geometry('710x500')
         window.title("Manage Showings and Tickets")
 
-        # Function to display all movie showings. Manager is able to add, update, and delete showings
-        def display_showings():
+        # Function to display everything that a manager needs to see
+        def display_home_page():
 
-            # All showings header
-            movie_showings_header = Label(window, text="Current Showings", fg='white', bg='black', width=40,
-                                          font='Helvetica 18 bold')
-            movie_showings_header.grid(row=0, column=0, columnspan=8, pady=10)
+            # Function to display all movie showings. Manager is able to add, update, and delete showings
+            def display_showings():
 
-            # TODO: create procedure in MySQL to show all showings
-            showings = "SELECT * FROM showing"
-            cursor.execute(showings)
+                # All showings header
+                movie_showings_header = Label(window, text="Current Showings", fg='white', bg='black', width=40,
+                                              font='Helvetica 18 bold')
+                movie_showings_header.grid(row=0, column=0, columnspan=8, pady=10)
 
-            # Headers for each column
-            e = Label(window, width=10, text='Show ID', anchor='w', bg='grey')
-            e.grid(row=1, column=0)
-            e = Label(window, width=10, text='Movie ID', anchor='w', bg='grey')
-            e.grid(row=1, column=1)
-            e = Label(window, width=10, text='Price ID', anchor='w', bg='grey')
-            e.grid(row=1, column=2)
-            e = Label(window, width=10, text='Auditorium', anchor='w', bg='grey')
-            e.grid(row=1, column=3)
-            e = Label(window, width=10, text='Manager ID', anchor='w', bg='grey')
-            e.grid(row=1, column=4)
-            e = Label(window, width=10, text='Type', anchor='w', bg='grey')
-            e.grid(row=1, column=5)
-            e = Label(window, width=10, text='Time', anchor='w', bg='grey')
-            e.grid(row=1, column=6)
-            e = Label(window, width=10, text='Date', anchor='w', bg='grey')
-            e.grid(row=1, column=7)
+                # TODO: create procedure in MySQL to show all showings
+                showings = "SELECT * FROM showing"
+                cursor.execute(showings)
 
-            # Iterate through each row of the procedure and create a label
-            i = 2
-            for row in cursor.fetchall():
-                for j in range(len(list(row.values()))):
-                    e = Label(window, width=10, text=list(row.values())[j], anchor='w')
-                    e.grid(row=i, column=j)
-                # show the edit button
-                edit = Button(window, width=5, text='Edit', relief='ridge',
-                              anchor="w", command=lambda n=list(row.values())[0]: edit_showing(n))
-                edit.grid(row=i, column=8)
-                # show the delete button
-                e = Button(window, width=5, text='Delete', fg='red', relief='ridge',
-                           anchor="w", command=lambda k=list(row.values())[0]: delete_showing(k))
-                e.grid(row=i, column=9)
-                i = i + 1
+                # Headers for each column
+                e = Label(window, width=10, text='Show ID', anchor='w', bg='grey')
+                e.grid(row=1, column=0)
+                e = Label(window, width=10, text='Movie ID', anchor='w', bg='grey')
+                e.grid(row=1, column=1)
+                e = Label(window, width=10, text='Price ID', anchor='w', bg='grey')
+                e.grid(row=1, column=2)
+                e = Label(window, width=10, text='Auditorium', anchor='w', bg='grey')
+                e.grid(row=1, column=3)
+                e = Label(window, width=10, text='Manager ID', anchor='w', bg='grey')
+                e.grid(row=1, column=4)
+                e = Label(window, width=10, text='Type', anchor='w', bg='grey')
+                e.grid(row=1, column=5)
+                e = Label(window, width=10, text='Time', anchor='w', bg='grey')
+                e.grid(row=1, column=6)
+                e = Label(window, width=10, text='Date', anchor='w', bg='grey')
+                e.grid(row=1, column=7)
 
-        display_showings()
-
-        # Helper function to allow manager to add a movie showing
-        def add_showing():
-            i = 101  # start row after display
-
-            str_show_id = StringVar(window)
-            str_movie_id = StringVar(window)
-            str_pricing_id = StringVar(window)
-            str_auditorium_id = StringVar(window)
-            str_manager_id = StringVar(window)
-            str_showing_type = StringVar(window)
-            str_showing_date = StringVar(window)
-            str_showing_time = StringVar(window)
-
-            # Creating entry boxes for each value
-            e_show_id = Entry(window, textvariable=str_show_id, width=10, state='disabled')
-            e_show_id.grid(row=i, column=0)
-            l_movie_id = Entry(window, textvariable=str_movie_id, width=10)
-            l_movie_id.grid(row=i, column=1)
-            e_pricing_id = Entry(window, textvariable=str_pricing_id, width=10)
-            e_pricing_id.grid(row=i, column=2)
-            e_auditorium_id = Entry(window, textvariable=str_auditorium_id, width=10)
-            e_auditorium_id.grid(row=i, column=3)
-            l_manager_id = Entry(window, textvariable=str_manager_id, width=10, state='disabled')
-            l_manager_id.grid(row=i, column=4)
-            l_showing_type = Entry(window, textvariable=str_showing_type, width=10)
-            l_showing_type.grid(row=i, column=5)
-            e_showing_date = Entry(window, textvariable=str_showing_date, width=10)
-            e_showing_date.grid(row=i, column=6)
-            e_showing_time = Entry(window, textvariable=str_showing_time, width=10)
-            e_showing_time.grid(row=i, column=7)
-            update_button = Button(window, text='Add', command=lambda: add_record(),
-                                   relief='ridge', anchor="w", width=5)
-            update_button.grid(row=i, column=8)
-
-            # Helper function to add a record to the database
-            def add_record():  # add record
+                # Iterate through each row of the procedure and create a label
                 try:
-                    data = (str_movie_id.get(), str_pricing_id.get(), str_auditorium_id.get(), str_showing_type.get(),
-                            str_showing_time.get(), str_showing_date.get())
-                    stmt = "INSERT INTO showing(movie_id, pricing_id, auditorium_id, showing_type, showing_date, " \
-                           "showing_time) VALUES (%s, %s, %s, %s, %s, %s)"
-                    cursor.execute(stmt, data)
-                    for add_row in window.grid_slaves(i):  # remove the edit row
-                        add_row.grid_forget()
-                    display_showings()  # refresh the data
+                    i = 2
+                    for row in cursor.fetchall():
+                        for j in range(len(list(row.values()))):
+                            e = Label(window, width=10, text=list(row.values())[j], anchor='w')
+                            e.grid(row=i, column=j)
+                        # show the edit button
+                        edit = Button(window, width=5, text='Edit', relief='ridge',
+                                      anchor="w", command=lambda n=list(row.values())[0]: edit_showing(n))
+                        edit.grid(row=i, column=8)
+                        # show the delete button
+                        e = Button(window, width=5, text='Delete', fg='red', relief='ridge',
+                                   anchor="w", command=lambda k=list(row.values())[0]: delete_showing(k))
+                        e.grid(row=i, column=9)
+                        i = i + 1
                 except Exception as e:
-                    messagebox.showwarning(" ", "Value(s) entered are invalid.")
+                    messagebox.showwarning(" ", "An error has occurred.")
 
-        # Add showing button
-        add = Button(window, width=12, text='Add Showing', fg='green', relief='ridge',
-                     anchor="w", command=add_showing)
-        add.grid(row=1, column=8, columnspan=2)
+            display_showings()
 
-        def edit_showing(s_id):
-            i = 100  # start row after the last line of display
-            # collect record based on id and present for update.
-            select_stmt = "SELECT * FROM showing WHERE show_id=%s"
-            cursor.execute(select_stmt, s_id)
-            s = cursor.fetchone()  # row details
+            # Helper function to allow manager to add a movie showing
+            def add_showing():
+                i = 101  # start row after display
 
-            str_show_id = StringVar(window)
-            str_movie_id = StringVar(window)
-            str_pricing_id = StringVar(window)
-            str_auditorium_id = StringVar(window)
-            str_manager_id = StringVar(window)
-            str_showing_type = StringVar(window)
-            str_showing_date = StringVar(window)
-            str_showing_time = StringVar(window)
+                str_show_id = StringVar(window)
+                str_movie_id = StringVar(window)
+                str_pricing_id = StringVar(window)
+                str_auditorium_id = StringVar(window)
+                str_manager_id = StringVar(window)
+                str_showing_type = StringVar(window)
+                str_showing_date = StringVar(window)
+                str_showing_time = StringVar(window)
 
-            str_show_id.set(list(s.values())[0])  # storing show id
-            str_movie_id.set(list(s.values())[1])  # storing movie id
-            str_pricing_id.set(list(s.values())[2])  # storing pricing id
-            str_auditorium_id.set(list(s.values())[3])  # storing auditorium id
-            str_manager_id.set(list(s.values())[4])  # storing manager id
-            str_showing_type.set(list(s.values())[5])  # storing showing type
-            str_showing_date.set(list(s.values())[6])  # storing showing date
-            str_showing_time.set(list(s.values())[7])  # storing showing time
+                # Creating entry boxes for each value
+                e_show_id = Entry(window, textvariable=str_show_id, width=10, state='disabled')
+                e_show_id.grid(row=i, column=0)
+                l_movie_id = Entry(window, textvariable=str_movie_id, width=10)
+                l_movie_id.grid(row=i, column=1)
+                e_pricing_id = Entry(window, textvariable=str_pricing_id, width=10)
+                e_pricing_id.grid(row=i, column=2)
+                e_auditorium_id = Entry(window, textvariable=str_auditorium_id, width=10)
+                e_auditorium_id.grid(row=i, column=3)
+                l_manager_id = Entry(window, textvariable=str_manager_id, width=10, state='disabled')
+                l_manager_id.grid(row=i, column=4)
+                l_showing_type = Entry(window, textvariable=str_showing_type, width=10)
+                l_showing_type.grid(row=i, column=5)
+                e_showing_date = Entry(window, textvariable=str_showing_date, width=10)
+                e_showing_date.grid(row=i, column=6)
+                e_showing_time = Entry(window, textvariable=str_showing_time, width=10)
+                e_showing_time.grid(row=i, column=7)
+                update_button = Button(window, text='Add', command=lambda: add_record(),
+                                       relief='ridge', anchor="w", width=5)
+                update_button.grid(row=i, column=8)
 
-            # Creating entry boxes for each value
-            e_show_id = Entry(window, textvariable=str_show_id, width=10, state='disabled')
-            e_show_id.grid(row=i, column=0)
-            l_movie_id = Entry(window, textvariable=str_movie_id, width=10, state='disabled')
-            l_movie_id.grid(row=i, column=1)
-            e_pricing_id = Entry(window, textvariable=str_pricing_id, width=10)
-            e_pricing_id.grid(row=i, column=2)
-            e_auditorium_id = Entry(window, textvariable=str_auditorium_id, width=10)
-            e_auditorium_id.grid(row=i, column=3)
-            l_manager_id = Entry(window, textvariable=str_manager_id, width=10, state='disabled')
-            l_manager_id.grid(row=i, column=4)
-            l_showing_type = Entry(window, textvariable=str_showing_type, width=10, state='disabled')
-            l_showing_type.grid(row=i, column=5)
-            e_showing_date = Entry(window, textvariable=str_showing_date, width=10)
-            e_showing_date.grid(row=i, column=6)
-            e_showing_time = Entry(window, textvariable=str_showing_time, width=10)
-            e_showing_time.grid(row=i, column=7)
-            update_button = Button(window, text='Update', command=lambda: update_record(),
-                                   relief='ridge', anchor="w", width=5)
-            update_button.grid(row=i, column=8)
+                # Helper function to add a record to the database
+                def add_record():  # add record
+                    try:
+                        data = (
+                            str_movie_id.get(), str_pricing_id.get(), str_auditorium_id.get(), str_showing_type.get(),
+                            str_showing_time.get(), str_showing_date.get())
+                        stmt = "INSERT INTO showing(movie_id, pricing_id, auditorium_id, showing_type, showing_date, " \
+                               "showing_time) VALUES (%s, %s, %s, %s, %s, %s)"
+                        cursor.execute(stmt, data)
+                        for add_row in window.grid_slaves(i):  # remove the edit row
+                            add_row.grid_forget()
+                        display_home_page()  # refresh the data
+                    except Exception as e:
+                        messagebox.showwarning(" ", "Value(s) entered are invalid.")
 
-            try:
+            # Add showing button
+            add = Button(window, width=12, text='Add Showing', fg='green', relief='ridge',
+                         anchor="w", command=add_showing)
+            add.grid(row=1, column=8, columnspan=2)
+
+            def edit_showing(s_id):
+                i = 100  # start row after the last line of display
+                # collect record based on id and present for update.
+                select_stmt = "SELECT * FROM showing WHERE show_id=%s"
+                cursor.execute(select_stmt, s_id)
+                s = cursor.fetchone()  # row details
+
+                str_show_id = StringVar(window)
+                str_movie_id = StringVar(window)
+                str_pricing_id = StringVar(window)
+                str_auditorium_id = StringVar(window)
+                str_manager_id = StringVar(window)
+                str_showing_type = StringVar(window)
+                str_showing_date = StringVar(window)
+                str_showing_time = StringVar(window)
+
+                str_show_id.set(list(s.values())[0])  # storing show id
+                str_movie_id.set(list(s.values())[1])  # storing movie id
+                str_pricing_id.set(list(s.values())[2])  # storing pricing id
+                str_auditorium_id.set(list(s.values())[3])  # storing auditorium id
+                str_manager_id.set(list(s.values())[4])  # storing manager id
+                str_showing_type.set(list(s.values())[5])  # storing showing type
+                str_showing_date.set(list(s.values())[6])  # storing showing date
+                str_showing_time.set(list(s.values())[7])  # storing showing time
+
+                # Creating entry boxes for each value
+                e_show_id = Entry(window, textvariable=str_show_id, width=10, state='disabled')
+                e_show_id.grid(row=i, column=0)
+                l_movie_id = Entry(window, textvariable=str_movie_id, width=10, state='disabled')
+                l_movie_id.grid(row=i, column=1)
+                e_pricing_id = Entry(window, textvariable=str_pricing_id, width=10)
+                e_pricing_id.grid(row=i, column=2)
+                e_auditorium_id = Entry(window, textvariable=str_auditorium_id, width=10)
+                e_auditorium_id.grid(row=i, column=3)
+                l_manager_id = Entry(window, textvariable=str_manager_id, width=10, state='disabled')
+                l_manager_id.grid(row=i, column=4)
+                l_showing_type = Entry(window, textvariable=str_showing_type, width=10, state='disabled')
+                l_showing_type.grid(row=i, column=5)
+                e_showing_date = Entry(window, textvariable=str_showing_date, width=10)
+                e_showing_date.grid(row=i, column=6)
+                e_showing_time = Entry(window, textvariable=str_showing_time, width=10)
+                e_showing_time.grid(row=i, column=7)
+                update_button = Button(window, text='Update', command=lambda: update_record(),
+                                       relief='ridge', anchor="w", width=5)
+                update_button.grid(row=i, column=8)
+
                 def update_record():  # update record
-                    data = (str_pricing_id.get(), str_auditorium_id.get(), str_showing_time.get(), str_showing_date.get(),
-                            str_show_id.get())
-                    stmt = "UPDATE showing SET pricing_id=%s,auditorium_id=%s, showing_date=%s,showing_time=%s WHERE show_id=%s"
-                    cursor.execute(stmt, data)
-                    for edit_row in window.grid_slaves(i):  # remove the edit row
-                        edit_row.grid_forget()
-                    display_showings()  # refresh the data
-            except Exception as e:
-                messagebox.showwarning(" ", "Value(s) entered are invalid.")
+                    try:
+                        data = (str_pricing_id.get(), str_auditorium_id.get(), str_showing_time.get(),
+                                str_showing_date.get(), str_show_id.get())
+                        stmt = "UPDATE showing SET pricing_id=%s,auditorium_id=%s, showing_date=%s,showing_time=%s WHERE " \
+                               "show_id=%s "
+                        cursor.execute(stmt, data)
+                        for edit_row in window.grid_slaves(i):  # remove the edit row
+                            edit_row.grid_forget()
+                        display_home_page()  # refresh the data
+                    except Exception as e:
+                        messagebox.showwarning(" ", "Value(s) entered are invalid.")
 
-        # Helper function to delete ticket in database
-        def delete_showing(s_id):
-            try:
-                alert = messagebox.askyesnocancel("Delete Record",
-                                                  "Are you sure you want to delete this showing? ", icon='warning')
-                if alert:
-                    delete_showing_stmt = "DELETE FROM showing WHERE show_id = %s"
-                    show_id = [s_id]
-                    cursor.execute(delete_showing_stmt, show_id)
+            # Helper function to delete ticket in database
+            def delete_showing(s_id):
+                try:
+                    alert = messagebox.askyesnocancel("Delete Record",
+                                                      "Are you sure you want to delete this showing? ", icon='warning')
+                    if alert:
+                        delete_showing_stmt = "DELETE FROM showing WHERE show_id = %s"
+                        show_id = [s_id]
+                        cursor.execute(delete_showing_stmt, show_id)
 
-                    # Remove row from display
-                    for showing in window.grid_slaves():
-                        showing.grid_forget()
-                    display_showings()  # Refresh the list
-            except Exception as e:
-                messagebox.showwarning(" ", "An error occurred.")
+                        # Remove row from display
+                        for showing in window.grid_slaves():
+                            showing.grid_forget()
+                        display_home_page()  # Refresh the list
+                except Exception as e:
+                    messagebox.showwarning(" ", "An error occurred.")
+
+                # Function to show all currently booked tickets. Manager can delete ticket
+
+            def show_all_tickets():
+
+                # Showing all booked tickets header
+                all_tickets_header = Label(window, text="All Booked Tickets", fg='white', bg='black', width=40,
+                                           font='Helvetica 18 bold')
+                all_tickets_header.grid(row=200, column=0, columnspan=8, pady=10)
+
+                # Function to display all ticket reservations. Tickets can be deleted
+                def display():
+
+                    # Call procedure to show all booked tickets
+                    cursor.callproc('showAllTicket')
+
+                    # Headers for each column
+                    e = Label(window, width=10, text='Ticket ID', anchor='w', bg='grey')
+                    e.grid(row=201, column=2)
+                    e = Label(window, width=10, text='Customer ID', anchor='w', bg='grey')
+                    e.grid(row=201, column=3)
+                    e = Label(window, width=10, text='Show ID', anchor='w', bg='grey')
+                    e.grid(row=201, column=4)
+                    e = Label(window, width=10, text='Num_Seats', anchor='w', bg='grey')
+                    e.grid(row=201, column=5)
+
+                    # Iterate through each row of the procedure and create a label
+                    i = 202
+                    for row in cursor.fetchall():
+                        for j in range(len(list(row.values()))):
+                            e = Label(window, width=10, text=list(row.values())[j], anchor='w')
+                            e.grid(row=i, column=j + 2)
+                        # show the delete button
+                        e = Button(window, width=9, text='Delete', fg='red', relief='ridge',
+                                   anchor="center", command=lambda k=list(row.values())[0]: delete_ticket(k))
+                        e.grid(row=i, column=6)
+                        i = i + 1
+
+                display()
+
+                # Helper function to delete ticket in database
+                def delete_ticket(t_id):
+                    try:
+                        popup = messagebox.askyesnocancel("Delete Record",
+                                                          "Are you sure you want to delete this reservation?",
+                                                          icon='warning')
+                        if popup:
+                            delete_ticket_stmt = "DELETE FROM ticket WHERE ticket_id = %s"
+                            ticket_id = [t_id]
+                            cursor.execute(delete_ticket_stmt, ticket_id)
+
+                            # Remove row from display
+                            for ticket in window.grid_slaves():
+                                ticket.grid_forget()
+                            display_home_page()  # Refresh the list
+                    except Exception as e:
+                        messagebox.showwarning(" ", "An error occurred.")
+
+            show_all_tickets()
+
+        display_home_page()
 
     window.mainloop()
 
