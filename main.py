@@ -9,6 +9,7 @@ import pymysql.cursors
 
 # Define global variables
 customer_email = " "
+show_id = " "
 
 # Connect to the database
 connection = pymysql.connect(host='localhost',
@@ -227,139 +228,173 @@ def customer():
 
     # TODO: Customer manage bookings page
     def customer_manage_bookings():
-        # TODO: back button to go back to home page
 
         # Customer book ticket window
         window = Tk()
         window.geometry('700x700')
         window.title("Book Tickets")
 
-        # Movie booking header
-        movie_booking_header = Label(window, text="Book Tickets", fg='white', bg='black', width=40,
-                                     font='Helvetica 18 bold')
-        movie_booking_header.grid(row=0, column=0, columnspan=8, pady=10)
+        def display_customer_manage_bookings():
 
-        pick_movie = Label(window, text="Select a Movie:", fg='black', font='Helvetica 12')
-        pick_movie.grid(row=1, column=0, columnspan=2)
-
-        # Back button
-        back_button = Button(window, text="Back", fg='white', bg='maroon', width=10, borderwidth=6,
-                             command=lambda: [window.destroy(), customer_home_page()])
-        back_button.grid(row=0, column=8)
-
-        # Function to display showing info when user selects a dropdown menu item
-        def display_selected(choice):
-
-            # Get user's movie choice
-            choice = var.get()
-
-            # Treeview to display all showings of that movie
-            treeview = Treeview(window)
-            treeview['columns'] = ('Time', 'Date', 'Price')
-            treeview.column('#0', width=0, stretch=NO)
-            treeview.column('Time', anchor=CENTER, width=80)
-            treeview.column('Date', anchor=CENTER, width=80)
-            treeview.column('Price', anchor=CENTER, width=80)
-
-            treeview.heading('#0', text='', anchor=CENTER)
-            treeview.heading('Time', text='Time', anchor=CENTER)
-            treeview.heading('Date', text='Date', anchor=CENTER)
-            treeview.heading('Price', text='Price ($)', anchor=CENTER)
-
-            treeview.grid(row=100, column=2, columnspan=4)
-            treeview.bind()
-
-            # Call procedure to display all showings for the chosen movie
-            cursor.callproc('showShowing', (choice,))
-
-            i = 0
-
-            for row in cursor.fetchall():
-                values = list(row.values())
-                treeview.insert(parent='', index=i, iid=i, text='', values=values)
-                i = i + 1
-
-        # Dropdown menu to choose movie
-        movie_choices = ["Black Adam", "Black Panther: Wakanda Forever", "The Menu", "Ticket to Paradise"]
-        var = StringVar()  # Stringvar to store the value of options
-        var.set(movie_choices[0])  # sets the default option of options
-
-        movie_options = OptionMenu(window, var, *movie_choices, command=display_selected)
-        movie_options.grid(row=1, column=2, columnspan=4)
-
-        # TODO: Retrieve values from treeview and let customer pick number of seats
-
-        # TODO: Retrieve customer_id number from customer_email and book ticket
-
-        # TODO: Button to book ticket
-
-        # Showing all tickets purchased by the customer header
-        booked_tickets_header = Label(window, text="Your Tickets", fg='white', bg='black', width=40,
-                                      font='Helvetica 18 bold')
-        booked_tickets_header.grid(row=199, column=0, columnspan=8, pady=10)
-
-        # Function to display the customer's current ticket reservations. They are able to delete the tickets
-        def display():
+            # Retrieve customer id
             get_customer_id = "SELECT customer_id FROM customer WHERE email = %s"
             cursor.execute(get_customer_id, customer_email)
-
             cust_id_row = cursor.fetchone()
 
             # Set customer id
             cust_id = int(cust_id_row['customer_id'])
 
-            cursor.callproc('showTicket', (cust_id,))
+            # Movie booking header
+            movie_booking_header = Label(window, text="Book Tickets", fg='white', bg='black', width=40,
+                                         font='Helvetica 18 bold')
+            movie_booking_header.grid(row=0, column=0, columnspan=8, pady=10)
 
-            # Headers for each column
-            e = Label(window, width=15, text='Ticket ID', anchor='w', bg='grey')
-            e.grid(row=200, column=0)
-            e = Label(window, width=15, text='First Name', anchor='w', bg='grey')
-            e.grid(row=200, column=1)
-            e = Label(window, width=15, text='Last Name', anchor='w', bg='grey')
-            e.grid(row=200, column=2)
-            e = Label(window, width=15, text='Movie', anchor='w', bg='grey')
-            e.grid(row=200, column=3)
-            e = Label(window, width=15, text='Auditorium', anchor='w', bg='grey')
-            e.grid(row=200, column=4)
-            e = Label(window, width=15, text='Date', anchor='w', bg='grey')
-            e.grid(row=200, column=5)
-            e = Label(window, width=15, text='Time', anchor='w', bg='grey')
-            e.grid(row=200, column=6)
-            e = Label(window, width=15, text='# Seats', anchor='w', bg='grey')
-            e.grid(row=200, column=7)
+            pick_movie = Label(window, text="Select a Movie:", fg='black', font='Helvetica 12')
+            pick_movie.grid(row=1, column=0, columnspan=2)
 
-            # Iterate through each row of the procedure and create a label
-            i = 201
-            for row in cursor.fetchall():
-                for j in range(len(list(row.values()))):
-                    e = Label(window, width=15, text=list(row.values())[j], anchor='w')
-                    e.grid(row=i, column=j)
-                # show the delete button
-                e = Button(window, width=10, text='Delete Ticket', fg='red', relief='ridge',
-                           anchor="w", command=lambda k=list(row.values())[0]: delete_ticket(k))
-                e.grid(row=i, column=8)
-                i = i + 1
+            # Back button
+            back_button = Button(window, text="Back", fg='white', bg='maroon', width=10, borderwidth=6,
+                                 command=lambda: [window.destroy(), customer_home_page()])
+            back_button.grid(row=0, column=8)
 
-        display()
+            # Function to display showing info when user selects a dropdown menu item
+            def display_selected(choice):
 
-        # Helper function to delete ticket in database
-        def delete_ticket(t_id):
-            try:
-                popup = messagebox.askyesnocancel("Delete Record",
-                                                  "Are you sure you want to delete your reservation? ", icon='warning')
-                if popup:
-                    delete_ticket_stmt = "DELETE FROM ticket WHERE ticket_id = %s"
-                    ticket_id = [t_id]
-                    cursor.execute(delete_ticket_stmt, ticket_id)
+                def select_item(a):
+                    # Retrieve show_id from treeview
+                    cur_item = treeview.focus()
+                    global show_id
+                    show_id = treeview.item(cur_item)['values'][0]
 
-                    # Remove row from display
-                    for ticket in window.grid_slaves():
-                        ticket.grid_forget()
-                    display()  # Refresh the list
-            except Exception as e:
-                messagebox.showwarning(" ", "An error occurred.")
+                # Get user's movie choice
+                choice = var.get()
 
-        window.mainloop()
+                # Treeview to display all showings of that movie
+                treeview = Treeview(window)
+                treeview['columns'] = ('ID', 'Time', 'Date', 'Price')
+                treeview.column('#0', width=0, stretch=NO)
+                treeview.column('ID', anchor=CENTER, width=40)
+                treeview.column('Time', anchor=CENTER, width=70)
+                treeview.column('Date', anchor=CENTER, width=80)
+                treeview.column('Price', anchor=CENTER, width=80)
+
+                treeview.heading('#0', text='', anchor=CENTER)
+                treeview.heading('ID', text='ID', anchor=CENTER)
+                treeview.heading('Time', text='Time', anchor=CENTER)
+                treeview.heading('Date', text='Date', anchor=CENTER)
+                treeview.heading('Price', text='Price ($)', anchor=CENTER)
+
+                treeview.grid(row=100, column=2, columnspan=4)
+                treeview.bind('<ButtonRelease-1>', select_item)
+
+                # Call procedure to display all showings for the chosen movie
+                cursor.callproc('showShowing', (choice,))
+
+                i = 0
+
+                for row in cursor.fetchall():
+                    values = list(row.values())
+                    treeview.insert(parent='', index=i, iid=i, text='', values=values)
+                    i = i + 1
+
+                # TODO: Retrieve customer_id number from customer_email and book ticket
+                stmt = "SELECT customer_id FROM customer WHERE email = %s"
+                cursor.execute(stmt, customer_email)
+                cursor.fetchone()
+
+                # Label to pick number of seats
+                label_pick_seats = Label(window, text="Enter number of seats:", width=20, anchor='center')
+                label_pick_seats.grid(row=101, column=2, columnspan=2)  # show after treeview
+
+                num_seats = StringVar(window)
+
+                # Entry to let customer pick number of seats
+                pick_seats = Entry(window, width=10, textvariable=num_seats)
+                pick_seats.grid(row=101, column=4)
+
+                # Button to book ticket
+                book_ticket_button = Button(window, text="Book Ticket", fg='white', bg='maroon', width=15,
+                                            command=lambda: (window.destroy(), customer_manage_bookings(), customer_book_ticket()))
+                book_ticket_button.grid(row=101, column=5, pady=5, columnspan=2)
+
+                def customer_book_ticket():
+                    try:
+                        ticket_values = (cust_id, show_id, num_seats.get())
+                        cursor.callproc('addTicket', ticket_values)
+                        messagebox.showinfo(" ", "Your ticket has been booked!")
+                    except Exception as e:
+                        messagebox.showwarning(" ", "An error has occurred.")
+                        print(e)
+
+            # Dropdown menu to choose movie
+            movie_choices = ["Black Adam", "Black Panther: Wakanda Forever", "The Menu", "Ticket to Paradise"]
+            var = StringVar()  # Stringvar to store the value of options
+            var.set(movie_choices[0])  # sets the default option of options
+
+            movie_options = OptionMenu(window, var, *movie_choices, command=display_selected)
+            movie_options.grid(row=1, column=2, columnspan=4)
+
+            # Showing all tickets purchased by the customer header
+            booked_tickets_header = Label(window, text="Your Tickets", fg='white', bg='black', width=40,
+                                          font='Helvetica 18 bold')
+            booked_tickets_header.grid(row=199, column=0, columnspan=8, pady=10)
+
+            # Function to display the customer's current ticket reservations. They are able to delete the tickets
+            def display():
+
+                cursor.callproc('showTicket', (cust_id,))
+
+                # Headers for each column
+                e = Label(window, width=10, text='Ticket ID', anchor='w', bg='grey')
+                e.grid(row=200, column=0)
+                e = Label(window, width=10, text='First Name', anchor='w', bg='grey')
+                e.grid(row=200, column=1)
+                e = Label(window, width=10, text='Last Name', anchor='w', bg='grey')
+                e.grid(row=200, column=2)
+                e = Label(window, width=10, text='Movie', anchor='w', bg='grey')
+                e.grid(row=200, column=3)
+                e = Label(window, width=10, text='Auditorium', anchor='w', bg='grey')
+                e.grid(row=200, column=4)
+                e = Label(window, width=10, text='Date', anchor='w', bg='grey')
+                e.grid(row=200, column=5)
+                e = Label(window, width=10, text='Time', anchor='w', bg='grey')
+                e.grid(row=200, column=6)
+                e = Label(window, width=10, text='# Seats', anchor='w', bg='grey')
+                e.grid(row=200, column=7)
+
+                # Iterate through each row of the procedure and create a label
+                i = 201
+                for row in cursor.fetchall():
+                    for j in range(len(list(row.values()))):
+                        e = Label(window, width=10, text=list(row.values())[j], anchor='w')
+                        e.grid(row=i, column=j)
+                    # show the delete button
+                    e = Button(window, width=10, text='Delete Ticket', fg='red', relief='ridge',
+                               anchor="w", command=lambda k=list(row.values())[0]: delete_ticket(k))
+                    e.grid(row=i, column=8)
+                    i = i + 1
+
+            display()
+
+            # Helper function to delete ticket in database
+            def delete_ticket(t_id):
+                try:
+                    popup = messagebox.askyesnocancel("Delete Record",
+                                                      "Are you sure you want to delete your reservation? ", icon='warning')
+                    if popup:
+                        delete_ticket_stmt = "DELETE FROM ticket WHERE ticket_id = %s"
+                        ticket_id = [t_id]
+                        cursor.execute(delete_ticket_stmt, ticket_id)
+
+                        # Remove row from display
+                        for ticket in window.grid_slaves():
+                            ticket.grid_forget()
+                        display_customer_manage_bookings()  # Refresh the list
+                except Exception as e:
+                    messagebox.showwarning(" ", "An error occurred.")
+
+        display_customer_manage_bookings()
+    window.mainloop()
 
 
 # Manager functions
@@ -615,7 +650,7 @@ def manager():
                 all_tickets_header.grid(row=200, column=0, columnspan=8, pady=10)
 
                 # Function to display all ticket reservations. Tickets can be deleted
-                def display():
+                def display_manager():
 
                     # Call procedure to show all booked tickets
                     cursor.callproc('showAllTicket')
@@ -642,7 +677,7 @@ def manager():
                         e.grid(row=i, column=6)
                         i = i + 1
 
-                display()
+                display_manager()
 
                 # Helper function to delete ticket in database
                 def delete_ticket(t_id):
