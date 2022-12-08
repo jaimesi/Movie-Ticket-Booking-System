@@ -205,7 +205,7 @@ CREATE TABLE `showing` (
   CONSTRAINT `showing_ibfk_2` FOREIGN KEY (`pricing_id`) REFERENCES `pricing` (`pricing_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT `showing_ibfk_3` FOREIGN KEY (`auditorium_id`) REFERENCES `auditorium` (`auditorium_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `showing_ibfk_4` FOREIGN KEY (`manager_id`) REFERENCES `manager` (`manager_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -214,7 +214,7 @@ CREATE TABLE `showing` (
 
 LOCK TABLES `showing` WRITE;
 /*!40000 ALTER TABLE `showing` DISABLE KEYS */;
-INSERT INTO `showing` VALUES (1,505642,3,2,1,'IMAX','12:00','2022-11-28'),(2,505642,2,1,1,'3D','14:30','2022-11-28'),(3,800939,1,1,1,'2D','21:15','2022-11-28'),(4,505642,3,2,1,'IMAX','10:30','2022-11-29'),(5,505642,3,2,1,'IMAX','17:45','2022-11-29');
+INSERT INTO `showing` VALUES (1,505642,3,2,1,'IMAX','12:00','2022-11-28'),(2,505642,2,1,1,'3D','14:30','2022-11-28'),(3,800939,1,1,1,'2D','21:15','2022-11-28'),(4,505642,3,2,1,'IMAX','10:00','2022-11-29'),(5,505642,3,2,1,'IMAX','17:45','2022-11-29'),(6,800939,2,3,1,'2D','9:45','2022-12-01'),(7,800939,1,1,1,'3D','12:00','2022-11-27');
 /*!40000 ALTER TABLE `showing` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -235,7 +235,7 @@ CREATE TABLE `ticket` (
   KEY `show_id` (`show_id`),
   CONSTRAINT `ticket_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `ticket_ibfk_2` FOREIGN KEY (`show_id`) REFERENCES `showing` (`show_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -244,7 +244,7 @@ CREATE TABLE `ticket` (
 
 LOCK TABLES `ticket` WRITE;
 /*!40000 ALTER TABLE `ticket` DISABLE KEYS */;
-INSERT INTO `ticket` VALUES (1,1,1,2);
+INSERT INTO `ticket` VALUES (1,1,1,2),(2,1,1,2),(6,1,3,5),(7,1,4,4);
 /*!40000 ALTER TABLE `ticket` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -468,6 +468,63 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getCustId` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getCustId`(email_p varchar(64))
+begin
+	select customer_id from customer where email = email_p;
+end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `selectShowing` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `selectShowing`(show_id_p int)
+begin
+	select * from showing where show_id = show_id_p;
+end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `showAllShowings` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `showAllShowings`()
+begin
+	select * from showing;
+end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `showAllTicket` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -500,7 +557,7 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `showShowing`(movie_name_p varchar(64))
 begin
 	with m as (select movie_id from movie where movie_name = movie_name_p)
-    select s.showing_time, s.showing_date, p.price
+    select s.show_id, s.showing_time, s.showing_date, p.price
     from showing as s join m on s.movie_id = m.movie_id
 		join pricing as p on p.pricing_id = s.pricing_id;
 end ;;
@@ -568,4 +625,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-12-06 22:30:19
+-- Dump completed on 2022-12-08 11:46:41

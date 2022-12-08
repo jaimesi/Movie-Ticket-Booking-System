@@ -10,11 +10,14 @@ import pymysql.cursors
 customer_email = " "
 show_id = " "
 
-# TODO: ask user for username and password
+# Prompt user for their connection username and password
+username = input("Enter your username: ")
+pword = input("Enter your password: ")
+
 # Connect to the database
 connection = pymysql.connect(host='localhost',
-                             user='username',
-                             password='password',
+                             user=username,
+                             password=pword,
                              database='movie_final',
                              cursorclass=pymysql.cursors.DictCursor,
                              autocommit=True)
@@ -232,9 +235,8 @@ def customer():
         # Function to display everything a customer needs to see
         def display_customer_manage_bookings():
 
-            # TODO: Create procedure for below. Retrieve customer_id number from customer_email
-            get_customer_id = "SELECT customer_id FROM customer WHERE email = %s"
-            cursor.execute(get_customer_id, customer_email)
+            # Retrieve customer_id number from customer_email
+            cursor.callproc('getCustId', (customer_email, ))
             cust_id_row = cursor.fetchone()
 
             # Set customer id
@@ -296,11 +298,6 @@ def customer():
                     treeview.insert(parent='', index=i, iid=i, text='', values=values)
                     i = i + 1
 
-                # TODO: Create procedure for below. Retrieve customer_id number from customer_email
-                stmt = "SELECT customer_id FROM customer WHERE email = %s"
-                cursor.execute(stmt, customer_email)
-                cursor.fetchone()
-
                 # Label to pick number of seats
                 label_pick_seats = Label(window, text="Enter number of seats:", width=20, anchor='center')
                 label_pick_seats.grid(row=101, column=2, columnspan=2)  # show after treeview
@@ -325,6 +322,8 @@ def customer():
                         display_customer_manage_bookings()
                     except Exception as e:
                         messagebox.showwarning(" ", "An error has occurred.")
+                        print(e)
+                        print(show_id)
 
             # Dropdown menu to choose movie
             movie_choices = ["Black Adam", "Black Panther: Wakanda Forever", "The Menu", "Ticket to Paradise"]
@@ -383,9 +382,8 @@ def customer():
                                                       "Are you sure you want to delete your reservation? ",
                                                       icon='warning')
                     if popup:
-                        delete_ticket_stmt = "DELETE FROM ticket WHERE ticket_id = %s"
                         ticket_id = [t_id]
-                        cursor.execute(delete_ticket_stmt, ticket_id)
+                        cursor.callproc('deleteTicket', (ticket_id, ))
 
                         # Remove row from display
                         for ticket in window.grid_slaves():
@@ -476,9 +474,8 @@ def manager():
                                                command=lambda: [window.destroy(), manager()])
                 manager_logout_button.grid(row=0, column=8, columnspan=2)
 
-                # TODO: create procedure in MySQL to show all showings
-                showings = "SELECT * FROM showing"
-                cursor.execute(showings)
+                # Call procedure to show all showings
+                cursor.callproc('showAllShowings')
 
                 # Headers for each column
                 e = Label(window, width=10, text='Show ID', anchor='w', bg='grey')
@@ -559,9 +556,7 @@ def manager():
                         data = (
                             str_movie_id.get(), str_pricing_id.get(), str_auditorium_id.get(), str_showing_type.get(),
                             str_showing_time.get(), str_showing_date.get())
-                        stmt = "INSERT INTO showing(movie_id, pricing_id, auditorium_id, showing_type, showing_date, " \
-                               "showing_time) VALUES (%s, %s, %s, %s, %s, %s)"
-                        cursor.execute(stmt, data)
+                        cursor.callproc('addShowing', data)
                         for add_row in window.grid_slaves(i):  # remove the edit row
                             add_row.grid_forget()
                         display_home_page()  # refresh the data
@@ -576,10 +571,8 @@ def manager():
             def edit_showing(s_id):
                 i = 100  # start row after the last line of display
 
-                # TODO: create procedure
                 # Select record based on show_id and allow manager to update.
-                select_stmt = "SELECT * FROM showing WHERE show_id=%s"
-                cursor.execute(select_stmt, s_id)
+                cursor.callproc('selectShowing', (s_id, ))
                 s = cursor.fetchone()  # row details
 
                 str_show_id = StringVar(window)
