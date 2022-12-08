@@ -53,9 +53,7 @@ def customer_signup():
                                                 "Please login instead.")
                 else:
                     # Insert values into customer table
-                    # TODO: change to callproc()
-                    insert_stmt = "CALL addCustomer(%s, %s, %s, %s)"
-                    cursor.execute(insert_stmt, (email, password, first_name, last_name))
+                    cursor.callproc('addCustomer', (email, password, first_name, last_name))
 
                     # Delete text box contents
                     customer_email.delete(0, END)
@@ -122,7 +120,6 @@ def customer():
         else:
             try:
                 # Verify if customer's email address and password match database
-                # TODO: change to callfunc
                 select_stmt = "SELECT customerSignin(%s, %s)"
                 cursor.execute(select_stmt, (customer_login_email, customer_login_password))
 
@@ -226,7 +223,7 @@ def customer():
 
         window.mainloop()
 
-    # TODO: Customer manage bookings page
+    # Customer manage bookings page
     def customer_manage_bookings():
 
         # Customer book ticket window
@@ -234,9 +231,10 @@ def customer():
         window.geometry('700x700')
         window.title("Book Tickets")
 
+        # Function to display everything a customer needs to see
         def display_customer_manage_bookings():
 
-            # Retrieve customer id
+            # TODO: Create procedure for below. Retrieve customer_id number from customer_email
             get_customer_id = "SELECT customer_id FROM customer WHERE email = %s"
             cursor.execute(get_customer_id, customer_email)
             cust_id_row = cursor.fetchone()
@@ -264,7 +262,10 @@ def customer():
                     # Retrieve show_id from treeview
                     cur_item = treeview.focus()
                     global show_id
-                    show_id = treeview.item(cur_item)['values'][0]
+                    try:
+                        show_id = treeview.item(cur_item)['values'][0]
+                    except IndexError:
+                        show_id = 0
 
                 # Get user's movie choice
                 choice = var.get()
@@ -297,7 +298,7 @@ def customer():
                     treeview.insert(parent='', index=i, iid=i, text='', values=values)
                     i = i + 1
 
-                # TODO: Retrieve customer_id number from customer_email and book ticket
+                # TODO: Create procedure for below. Retrieve customer_id number from customer_email
                 stmt = "SELECT customer_id FROM customer WHERE email = %s"
                 cursor.execute(stmt, customer_email)
                 cursor.fetchone()
@@ -314,14 +315,16 @@ def customer():
 
                 # Button to book ticket
                 book_ticket_button = Button(window, text="Book Ticket", fg='white', bg='maroon', width=15,
-                                            command=lambda: (window.destroy(), customer_manage_bookings(), customer_book_ticket()))
+                                            command=lambda: (customer_book_ticket()))
                 book_ticket_button.grid(row=101, column=5, pady=5, columnspan=2)
 
                 def customer_book_ticket():
                     try:
-                        ticket_values = (cust_id, show_id, num_seats.get())
-                        cursor.callproc('addTicket', ticket_values)
-                        messagebox.showinfo(" ", "Your ticket has been booked!")
+                        cursor.callproc('addTicket', (cust_id, show_id, num_seats.get(),))
+                        var.set(movie_choices[2])
+                        treeview.destroy()
+                        messagebox.showinfo(" ", "Ticket successfully booked. Thanks!")
+                        display_customer_manage_bookings()
                     except Exception as e:
                         messagebox.showwarning(" ", "An error has occurred.")
                         print(e)
@@ -329,7 +332,7 @@ def customer():
             # Dropdown menu to choose movie
             movie_choices = ["Black Adam", "Black Panther: Wakanda Forever", "The Menu", "Ticket to Paradise"]
             var = StringVar()  # Stringvar to store the value of options
-            var.set(movie_choices[0])  # sets the default option of options
+            var.set(movie_choices[2])  # sets the default option of options
 
             movie_options = OptionMenu(window, var, *movie_choices, command=display_selected)
             movie_options.grid(row=1, column=2, columnspan=4)
@@ -380,7 +383,8 @@ def customer():
             def delete_ticket(t_id):
                 try:
                     popup = messagebox.askyesnocancel("Delete Record",
-                                                      "Are you sure you want to delete your reservation? ", icon='warning')
+                                                      "Are you sure you want to delete your reservation? ",
+                                                      icon='warning')
                     if popup:
                         delete_ticket_stmt = "DELETE FROM ticket WHERE ticket_id = %s"
                         ticket_id = [t_id]
@@ -394,6 +398,7 @@ def customer():
                     messagebox.showwarning(" ", "An error occurred.")
 
         display_customer_manage_bookings()
+
     window.mainloop()
 
 
@@ -409,14 +414,15 @@ def manager():
         else:
             try:
                 # Verify if manager's username and password match database
-                manager_select_stmt = "SELECT COUNT(*) FROM manager WHERE username = %s AND manager_password = %s"
+                manager_select_stmt = "SELECT managerSignin(%s, %s)"  # calling function
+
                 cursor.execute(manager_select_stmt, (manager_username, manager_password))
 
                 # Check to see if a value is returned
                 num_rows = cursor.fetchone()
 
                 # If no rows are found, the manager account does not exist
-                if num_rows["COUNT(*)"] == 0:
+                if list(num_rows.values())[0] == 0:
                     messagebox.showwarning(" ", "Incorrect manager login information. Try again.")
 
                 # If the account exists and the password matches, go to home page of the manager
@@ -466,6 +472,12 @@ def manager():
                 movie_showings_header = Label(window, text="Current Showings", fg='white', bg='black', width=40,
                                               font='Helvetica 18 bold')
                 movie_showings_header.grid(row=0, column=0, columnspan=8, pady=10)
+
+                # Logout button
+                manager_logout_button = Button(window, text="Logout", fg='white', bg='maroon',
+                                               height=1, width=8, font='Helvetica 12 bold',
+                                               command=lambda: [window.destroy(), manager()])
+                manager_logout_button.grid(row=0, column=8, columnspan=2)
 
                 # TODO: create procedure in MySQL to show all showings
                 showings = "SELECT * FROM showing"
@@ -566,7 +578,9 @@ def manager():
 
             def edit_showing(s_id):
                 i = 100  # start row after the last line of display
-                # collect record based on id and present for update.
+
+                # TODO: create procedure
+                # Select record based on show_id and allow manager to update.
                 select_stmt = "SELECT * FROM showing WHERE show_id=%s"
                 cursor.execute(select_stmt, s_id)
                 s = cursor.fetchone()  # row details
@@ -612,16 +626,16 @@ def manager():
 
                 def update_record():  # update record
                     try:
-                        data = (str_pricing_id.get(), str_auditorium_id.get(), str_showing_time.get(),
-                                str_showing_date.get(), str_show_id.get())
-                        stmt = "UPDATE showing SET pricing_id=%s,auditorium_id=%s, showing_date=%s,showing_time=%s WHERE " \
-                               "show_id=%s "
-                        cursor.execute(stmt, data)
+                        cursor.callproc('updateShowing',
+                                        (str_show_id.get(), str_pricing_id.get(), str_auditorium_id.get(),
+                                         str_showing_time.get(),
+                                         str_showing_date.get()))
                         for edit_row in window.grid_slaves(i):  # remove the edit row
                             edit_row.grid_forget()
                         display_home_page()  # refresh the data
                     except Exception as e:
                         messagebox.showwarning(" ", "Value(s) entered are invalid.")
+                        print(e)
 
             # Helper function to delete ticket in database
             def delete_showing(s_id):
@@ -629,9 +643,8 @@ def manager():
                     alert = messagebox.askyesnocancel("Delete Record",
                                                       "Are you sure you want to delete this showing? ", icon='warning')
                     if alert:
-                        delete_showing_stmt = "DELETE FROM showing WHERE show_id = %s"
-                        show_id = [s_id]
-                        cursor.execute(delete_showing_stmt, show_id)
+                        showing_id = [s_id]
+                        cursor.callproc('deleteShowing', showing_id)
 
                         # Remove row from display
                         for showing in window.grid_slaves():
@@ -686,9 +699,8 @@ def manager():
                                                           "Are you sure you want to delete this reservation?",
                                                           icon='warning')
                         if popup:
-                            delete_ticket_stmt = "DELETE FROM ticket WHERE ticket_id = %s"
                             ticket_id = [t_id]
-                            cursor.execute(delete_ticket_stmt, ticket_id)
+                            cursor.callproc('deleteTicket', ticket_id)
 
                             # Remove row from display
                             for ticket in window.grid_slaves():
@@ -720,6 +732,14 @@ Button(window, text="Manager Login", height=2, width=15, bg='black', fg='white',
        command=lambda: [window.destroy(), manager()]).pack(pady=(20, 0))
 Button(window, text="Customer Sign Up", height=2, width=15, bg='black', fg='white',
        command=lambda: [window.destroy(), customer_signup()]).pack(pady=(100, 0))
-Button(window, text="Quit", height=2, width=15, bg='black', fg='white', command=window.destroy).pack(pady=(20, 0))
+Button(window, text="Quit", height=2, width=15, bg='black', fg='white', command=lambda: close_application()) \
+    .pack(pady=(20, 0))
+
+
+# If the user quits the application, close the connection and destroy window
+def close_application():
+    window.destroy()
+    connection.close()
+
 
 window.mainloop()
