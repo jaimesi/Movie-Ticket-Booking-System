@@ -322,8 +322,6 @@ def customer():
                         display_customer_manage_bookings()
                     except Exception as e:
                         messagebox.showwarning(" ", "An error has occurred.")
-                        print(e)
-                        print(show_id)
 
             # Dropdown menu to choose movie
             movie_choices = ["Black Adam", "Black Panther: Wakanda Forever", "The Menu", "Ticket to Paradise"]
