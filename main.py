@@ -10,6 +10,7 @@ import pymysql.cursors
 customer_email = " "
 show_id = " "
 
+# TODO: ask user for username and password
 # Connect to the database
 connection = pymysql.connect(host='localhost',
                              user='username',
@@ -67,7 +68,6 @@ def customer_signup():
 
             except Exception as e:
                 messagebox.showwarning(" ", "Values entered are either not unique or empty.")
-                print(e)
 
         connection.commit()
 
@@ -137,7 +137,6 @@ def customer():
 
             except Exception as e:
                 messagebox.showwarning(" ", "An error occurred.")
-                print(e)
 
     # Customer login window
     window = Tk()
@@ -326,7 +325,6 @@ def customer():
                         display_customer_manage_bookings()
                     except Exception as e:
                         messagebox.showwarning(" ", "An error has occurred.")
-                        print(e)
 
             # Dropdown menu to choose movie
             movie_choices = ["Black Adam", "Black Panther: Wakanda Forever", "The Menu", "Ticket to Paradise"]
@@ -458,7 +456,7 @@ def manager():
     def manager_home_page():
 
         window = Tk()
-        window.geometry('710x500')
+        window.geometry('710x800')
         window.title("Manage Showings and Tickets")
 
         # Function to display everything that a manager needs to see
@@ -634,7 +632,6 @@ def manager():
                         display_home_page()  # refresh the data
                     except Exception as e:
                         messagebox.showwarning(" ", "Value(s) entered are invalid.")
-                        print(e)
 
             # Helper function to delete ticket in database
             def delete_showing(s_id):
