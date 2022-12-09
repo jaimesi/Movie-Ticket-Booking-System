@@ -727,6 +727,7 @@ Button(window, text="Quit", height=2, width=15, bg='black', fg='white', command=
 def close_application():
     window.destroy()
     connection.close()
+    cursor.close()
 
 
 window.mainloop()
