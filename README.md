@@ -60,4 +60,4 @@ the tkinter GUI will appear.
 11) Feel free to create a new customer account as well, and use that information to log in.
 
 ## Demo Video  
-[![](https://markdown-videos.deta/youtube/7uTTbUk_my0)](https://youtu.be/{7uTTbUk_my0)
+[![Movie Ticket Booking System Demo](https://github.com/jaimesi/NUMADFa22_Team15/blob/master/app/src/main/AtYourServiceScreenshot.png)](https://youtu.be/7uTTbUk_my0)
