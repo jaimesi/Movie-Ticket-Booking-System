@@ -60,4 +60,7 @@ the tkinter GUI will appear.
 11) Feel free to create a new customer account as well, and use that information to log in.
 
 ## Demo Video  
+
+Please click on the image below to view our demo video.  
+
 [![Movie Ticket Booking System Demo](https://github.com/jaimesi/Movie-Ticket-Booking-System/blob/master/assets/thumbnail.jpg)](https://youtu.be/7uTTbUk_my0)
